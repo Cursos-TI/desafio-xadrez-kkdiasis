@@ -15,10 +15,12 @@ Obs: É obrigatório o uso de loops aninhados na movimentação do bispo e funç
 
 */
 
+//Aluno: Cássio Assis
+
+
 // DEFININDO UMA ESTRUTURA COMUM PARA TODAS AS PEÇAS.
 typedef struct {
     char nome[10];
-    char direcoesPermitidas[30];
     char direcao[30];
     char direcao2[30];
     int qtdMoves;
@@ -29,12 +31,13 @@ void gameStart();
 //Movimentos da Rainha utilizando recursão>
 void mvRainha(Pecas *p); 
 
+//Movimentos da torre utiliza loop.
 void mvTorre(Pecas *p);
 
-// CAVALO TEM MENU PROPRIO DE MOVIMENTO
+// CAVALO TEM MENU PRóPRIO DE MOVIMENTO
 void mvCavalo(Pecas *p);
 
-// BISPO TEM MENU PROPRIO DE MOVIMENTO.
+// BISPO TEM MENU PRóPRIO DE MOVIMENTO.
 void mvBispo(Pecas *p);
 
 
@@ -44,7 +47,7 @@ void gameStart(){
     Pecas peca;
     int selDir=0, selQuantMoves=0, selPeca=0;
     
-    //MENU INICIAL PARA TODAS AS PEÇAS
+    //Menu Principal comum a todas as peças
     printf("\n\t\t==== CLI CHESS ====\n\n");
     printf("\tEscolha a peca que deseja mover:\n");
     printf("\t1) Rainha\n");
@@ -61,10 +64,13 @@ void gameStart(){
         case 2 : strcpy(peca.nome, "TORRE"); break;
         case 3 : strcpy(peca.nome, "CAVALO"); break;
         case 4 : strcpy(peca.nome, "BISPO"); break;
+        //caso opção invalida faz recursão, foi colocado o return no fim para ao final ele retornar a main()
+        //sem esse return o código continua a partir normalmente gerando busg de io.
         default: printf("\n\n\tOpcao Invalida! Reiniciando...\n\n"); gameStart(); return;
     }
     
-    //NESTE BLOCO SEPARAM-SE BISPO E CAVALO POIS ELES TEM MENU A PARTIR PRÓPRIOS.
+    //Neste bloco separam-se as peças Bispo e Cavalo, por conta dos movimentos peculiares deles
+    //Serão tratados em função própria mvBispo() e mvCavalo().
     if(strcmp(peca.nome, "BISPO") == 0){
         mvBispo(&peca); return;
     
@@ -73,7 +79,11 @@ void gameStart(){
     
     }else{
 
-        //MENU COMUM AS DEMAIS PEÇAS.
+     //Menu comum as demais peças. 
+     //a saida será enviada a uma função padrão para movimentos verticais e horizontais
+     //pode ser mvRainha(), que usa recursão, ou, mvTorre, que usa loops.
+     //dados extras podem ser tratados diretos na função, como por exemplo limitar a quantidade 
+     //de movimentos de um peão para 1.
         printf("\n\tEscolha a direcao:\n");
         printf("\t1) Esquerda\n");
         printf("\t2) Direita\n");
@@ -96,7 +106,7 @@ void gameStart(){
             scanf("%d", &selQuantMoves);
             peca.qtdMoves = selQuantMoves;
             printf("\n\t%s MOVE %d CASAS PARA %s: \n", peca.nome, peca.qtdMoves, peca.direcao);
-            mvRainha(&peca);
+            mvTorre(&peca);
         
     }
 
@@ -108,10 +118,12 @@ void gameStart(){
 }
 
 int main (void){
-    //COMEÇAR!!
     int jogar=1;
+    
+    //COMEÇAR!!
     gameStart();
     
+    //retornando da função gameStart entra neste loop onde o jogador decide se continua o jogo ou sai.
     while(jogar == 1){
         printf("\n\tJogar novamente?\n1) Sim\n2) Sair ");
         printf("\nDigite numero da opcao: ");
@@ -124,11 +136,11 @@ int main (void){
         }
     }
     
+    //FIM
     printf("Ate Logo!!");
 
     
-        //FIM
-    //BAI BAI
+        //BAI BAI
 
         return 0;
 }
