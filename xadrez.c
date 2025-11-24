@@ -15,8 +15,6 @@ Obs: É obrigatório o uso de loops aninhados na movimentação do bispo e funç
 
 */
 
-
-
 // DEFININDO UMA ESTRUTURA COMUM PARA TODAS AS PEÇAS.
 typedef struct {
     char nome[10];
@@ -26,8 +24,115 @@ typedef struct {
     int qtdMoves;
 }Pecas;
 
+void gameStart();
+//PROTÓTIPO DE FUNCOES DE MOVIMENTAÇÃO DAS PEÇAS (funções estão na mesma ordem após o main):
+//Movimentos da Rainha utilizando recursão>
+void mvRainha(Pecas *p); 
 
-//FUNCOES DE MOVIMENTAÇÃO DAS PEÇAS:
+void mvTorre(Pecas *p);
+
+// CAVALO TEM MENU PROPRIO DE MOVIMENTO
+void mvCavalo(Pecas *p);
+
+// BISPO TEM MENU PROPRIO DE MOVIMENTO.
+void mvBispo(Pecas *p);
+
+
+//Menu para selecao de peças e movimento.
+void gameStart(){
+    
+    Pecas peca;
+    int selDir=0, selQuantMoves=0, selPeca=0;
+    
+    //MENU INICIAL PARA TODAS AS PEÇAS
+    printf("\n\t\t==== CLI CHESS ====\n\n");
+    printf("\tEscolha a peca que deseja mover:\n");
+    printf("\t1) Rainha\n");
+    printf("\t2) Torre\n");
+    printf("\t3) Cavalo\n");
+    printf("\t4) Bispo\n");
+    
+    printf("\tDigite o numero da peca que desja mover:");
+    scanf("%d", &selPeca);
+    
+    switch (selPeca)
+    {
+        case 1 : strcpy(peca.nome, "RAINHA"); break;
+        case 2 : strcpy(peca.nome, "TORRE"); break;
+        case 3 : strcpy(peca.nome, "CAVALO"); break;
+        case 4 : strcpy(peca.nome, "BISPO"); break;
+        default: printf("\n\n\tOpcao Invalida! Reiniciando...\n\n"); gameStart(); return;
+    }
+    
+    //NESTE BLOCO SEPARAM-SE BISPO E CAVALO POIS ELES TEM MENU A PARTIR PRÓPRIOS.
+    if(strcmp(peca.nome, "BISPO") == 0){
+        mvBispo(&peca); return;
+    
+    }else if(strcmp(peca.nome, "CAVALO") == 0){
+        mvCavalo(&peca); return;
+    
+    }else{
+
+        //MENU COMUM AS DEMAIS PEÇAS.
+        printf("\n\tEscolha a direcao:\n");
+        printf("\t1) Esquerda\n");
+        printf("\t2) Direita\n");
+        printf("\t3) Cima\n");
+        printf("\t4) Baixo\n");
+        printf("\tDigite o numero da direcao desejada:");
+    
+        scanf("%d", &selDir);
+        
+        switch (selDir)
+        {
+            case 1 : strcpy(peca.direcao, "ESQUERDA"); break;
+            case 2 : strcpy(peca.direcao, "DIREITA"); break;
+            case 3 : strcpy(peca.direcao, "CIMA"); break;
+            case 4 : strcpy(peca.direcao, "BAIXO"); break;
+            default: printf("\n\n\tOpcao Invalida! Reiniciando...\n\n"); gameStart(); return;
+        }
+                    
+            printf("\n\tDigite a quantidade de casas: ");
+            scanf("%d", &selQuantMoves);
+            peca.qtdMoves = selQuantMoves;
+            printf("\n\t%s MOVE %d CASAS PARA %s: \n", peca.nome, peca.qtdMoves, peca.direcao);
+            mvRainha(&peca);
+        
+    }
+
+
+    
+    
+    
+ 
+}
+
+int main (void){
+    //COMEÇAR!!
+    int jogar=1;
+    gameStart();
+    
+    while(jogar == 1){
+        printf("\n\tJogar novamente?\n1) Sim\n2) Sair ");
+        printf("\nDigite numero da opcao: ");
+        scanf("%d", &jogar);
+        if(jogar == 1){
+            gameStart();
+        }else if(jogar < 1 || jogar > 2){
+            printf("\n\tOpcao invalida!!!\n");
+            jogar = 1;
+        }
+    }
+    
+    printf("Ate Logo!!");
+
+    
+        //FIM
+    //BAI BAI
+
+        return 0;
+}
+
 
 void mvRainha(Pecas *p){
     if(p->qtdMoves < 1)return;
@@ -48,42 +153,62 @@ void mvTorre(Pecas *p){
     }
 }
 
-// CAVALO TEM MENU PROPRIO DE MOVIMENTO
 void mvCavalo(Pecas *p){
-    int move1 = 1, move2, dir;
-    
+    int selDir=0, move1=0, move2=0;
 
+    //selecionar primeira direção do cavalo:
+    printf("\n\tEscolha a direcao:\n");
+    printf("\t1) Esquerda\n");
+    printf("\t2) Direita\n");
+    printf("\t3) Cima\n");
+    printf("\t4) Baixo\n");
+    printf("\tDigite o numero da direcao desejada:");
+    scanf("%d", &selDir); 
+        
+    switch (selDir)
+    {
+        case 1 : strcpy(p->direcao, "ESQUERDA"); break;
+        case 2 : strcpy(p->direcao, "DIREITA"); break;
+        case 3 : strcpy(p->direcao, "CIMA"); break;
+        case 4 : strcpy(p->direcao, "BAIXO"); break;
+        default: printf("\n\n\tOpcao Invalida! Reiniciando...\n\n"); mvCavalo(p); return;
+    }
+
+    //selecionando a quantidade de casas do primeiro movimento:
+    //caso 1 seja escolhido automaticamente o segundo movimento será 2 e vice-versa.
     printf("\n\tMovimento para %s (1 ou 2): ", p->direcao);
     scanf("%d", &move1);
     switch (move1)
     {
         case 1: move2 = 2; break;
         case 2: move2 = 1; break;
-        default: break;
+        default: printf("\n\n\tOpcao Invalida! Reiniciando...\n\n"); mvCavalo(p); return;
     }
     
+    //Selecionando o segundo movimento, completando o l do cavalo
+    //verificando as opcoes escolhidas previamente
     if((strcasecmp(p->direcao, "Esquerda") == 0) || (strcasecmp(p->direcao, "Direita") == 0)){
         printf("Finaliza movimento em: \n");
         printf("1) Cima\n2) Baixo\n");
         printf("Digite Opcao: ");
-        scanf("%d", &dir);
-        switch (dir)
+        scanf("%d", &selDir);
+        switch (selDir)
         {
         case 1: strcpy(p->direcao2, "CIMA"); break;
         case 2: strcpy(p->direcao2, "BAIXO"); break;
-        default: break;
+        default: printf("\n\n\tOpcao Invalida! Reiniciando...\n\n"); mvCavalo(p); return;
         }
 
     }else{
         printf("Finaliza movimento em: \n");
         printf("1) Esquerda\n2) Direita\n");
         printf("Digite Opcao: ");
-        scanf("%d", &dir);
-        switch (dir)
+        scanf("%d", &selDir);
+        switch (selDir)
         {
         case 1: strcpy(p->direcao2, "ESQUERDA"); break;
         case 2: strcpy(p->direcao2, "DIREITA"); break;
-        default: break;
+        default: printf("\n\n\tOpcao Invalida! Reiniciando...\n\n"); mvCavalo(p); return;
         }
     }
 
@@ -99,7 +224,6 @@ void mvCavalo(Pecas *p){
     }while(move2 > 0 );
 }
 
-// BISPO TEM MENU PROPRIO DE MOVIMENTO.
 void mvBispo(Pecas *p){
     int move1 = 1;
     int dir;
@@ -118,8 +242,7 @@ void mvBispo(Pecas *p){
         case 2: strcpy(p->direcao, "CIMA"); strcpy(p->direcao2, "DIREITA"); break;
         case 3: strcpy(p->direcao, "BAIXO"); strcpy(p->direcao2, "ESQUERDA"); break;
         case 4: strcpy(p->direcao, "BAIXO"); strcpy(p->direcao2, "DIREITA"); break;
-    
-    default: break;
+        default: printf("\n\n\tOpcao Invalida! Reiniciando...\n\n"); mvBispo(p); return;
     }
 
     printf("Digite a quantidade de movimentos: ");
@@ -138,91 +261,4 @@ void mvBispo(Pecas *p){
 }
 
 
-//Menu para selecao de pelas e movimento.
-void gameStart(){
-    
-    Pecas peca;
-    int selDir, selQuantMoves, selPeca;
-    
-    printf("\n\t\t==== CLI CHESS ====\n\n");
-    printf("\tEscolha a peca que deseja mover:\n");
-    printf("\t1) Rainha\n");
-    printf("\t2) Torre\n");
-    printf("\t3) Cavalo\n");
-    printf("\t4) Bispo\n");
-    
-    printf("\tDigite o numero da peca que desja mover:");
-    scanf("%d", &selPeca);
-    
-    switch (selPeca)
-    {
-        case 1 : strcpy(peca.nome, "RAINHA"); break;
-        case 2 : strcpy(peca.nome, "TORRE"); break;
-        case 3 : strcpy(peca.nome, "CAVALO"); break;
-        case 4 : strcpy(peca.nome, "BISPO"); break;
-        default: printf("\n\n\tOpcao Invalida! Reiniciando...\n\n"); gameStart();
-    }
-    
-    if(strcmp(peca.nome, "BISPO") == 0){
-        mvBispo(&peca);
-    
-    }else{
 
-
-        printf("\n\tEscolha a direcao:\n");
-        printf("\t1) Esquerda\n");
-        printf("\t2) Direita\n");
-        printf("\t3) Cima\n");
-        printf("\t4) Baixo\n");
-        printf("\tDigite o numero da direcao desejada:");
-    
-        scanf("%d", &selDir);
-        
-        switch (selDir)
-        {
-            case 1 : strcpy(peca.direcao, "ESQUERDA"); break;
-            case 2 : strcpy(peca.direcao, "DIREITA"); break;
-            case 3 : strcpy(peca.direcao, "CIMA"); break;
-            case 4 : strcpy(peca.direcao, "BAIXO"); break;
-            default: printf("\n\n\tOpcao Invalida! Reiniciando...\n\n"); gameStart();
-        }
-        if(strcmp(peca.nome, "CAVALO") != 0){
-            
-            printf("\n\tDigite a quantidade de casas: ");
-            scanf("%d", &selQuantMoves);
-            peca.qtdMoves = selQuantMoves;
-            printf("\n\t%s MOVE %d CASAS PARA %s: \n", peca.nome, peca.qtdMoves, peca.direcao);
-            mvTorre(&peca);
-        }else{
-            mvCavalo(&peca);
-        }
-    }
-
-
-    
-    //continuar ou sair:
-        printf("\n\tJogar novamente?\n1) Sim\n2) Sair ");
-        printf("\nDigite numero da opcao: ");
-        int jogar;
-        scanf("%d", &jogar);
-
-        switch (jogar)
-        {
-        case 1: gameStart();
-        case 2: return;
-        default: printf("\n\tOpcao invalida!"); 
-        }
-    
-        //FIM
-    
- 
-}
-
-int main (void){
-    
-    gameStart();
-
-    printf("Ate logo..");
-
-
-}
